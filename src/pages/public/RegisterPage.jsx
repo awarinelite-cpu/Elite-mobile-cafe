@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Eye, EyeOff } from 'lucide-react';
+import { CATEGORIES, ACADEMIC_LEVELS } from '../../components/common/StatusHelpers';
 
 export default function RegisterPage() {
   const { register } = useAuth();
