@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { createOrder } from '../../firebase/services';
 import { CATEGORIES, ACADEMIC_LEVELS } from '../../components/common/StatusHelpers';
 import toast from 'react-hot-toast';
-import { Send, ChevronDown } from 'lucide-react';
+import { Send } from 'lucide-react';
 
 export default function RequestPage() {
   const { user, profile } = useAuth();
@@ -38,7 +38,7 @@ export default function RequestPage() {
         clientEmail: user.email,
         wordCount: form.wordCount ? Number(form.wordCount) : null,
       });
-      toast.success('Request submitted! We\'ll review it and get back to you shortly.');
+      toast.success("Request submitted! We'll review it and get back to you shortly.");
       navigate(`/order/${order.id}`);
     } catch (err) {
       toast.error('Failed to submit request. Please try again.');
@@ -53,13 +53,14 @@ export default function RequestPage() {
           <span className="section-eyebrow">New Order</span>
           <h2 style={{ marginBottom: 10 }}>Submit Research Request</h2>
           <p style={{ color: 'var(--muted)' }}>
-            {prefillTopic ? `You selected: "${prefillTopic.title}" — review and add your requirements below.` : 'Fill in the details of your custom research request.'}
+            {prefillTopic
+              ? `You selected: "${prefillTopic.title}" — review and add your requirements below.`
+              : 'Fill in the details of your custom research request.'}
           </p>
         </div>
 
         <div className="card card-pad">
           <form onSubmit={handleSubmit}>
-            {/* Topic */}
             <div className="form-group">
               <label className="form-label">Research Topic *</label>
               <input className="form-input" type="text" required maxLength={200}
@@ -68,7 +69,6 @@ export default function RequestPage() {
               <span className="form-hint">Be as specific as possible for accurate pricing.</span>
             </div>
 
-            {/* Category + Level */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">Category</label>
@@ -86,12 +86,11 @@ export default function RequestPage() {
               </div>
             </div>
 
-            {/* Word count + Deadline */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">Word Count (approx.)</label>
-                <input className="form-input" type="number" min={100} max={100000} placeholder="e.g. 3000"
-                  value={form.wordCount} onChange={set('wordCount')} />
+                <input className="form-input" type="number" min={100} max={100000}
+                  placeholder="e.g. 3000" value={form.wordCount} onChange={set('wordCount')} />
               </div>
               <div className="form-group">
                 <label className="form-label">Deadline</label>
@@ -100,7 +99,6 @@ export default function RequestPage() {
               </div>
             </div>
 
-            {/* Reference Style */}
             <div className="form-group">
               <label className="form-label">Reference / Citation Style</label>
               <select className="form-select" value={form.referenceStyle} onChange={set('referenceStyle')}>
@@ -115,16 +113,15 @@ export default function RequestPage() {
               </select>
             </div>
 
-            {/* Instructions */}
             <div className="form-group">
               <label className="form-label">Additional Instructions</label>
-              <textarea className="form-textarea" rows={5} placeholder="Any specific requirements, sources to use/avoid, formatting instructions, outline preferences, marking rubric details…"
+              <textarea className="form-textarea" rows={5}
+                placeholder="Any specific requirements, sources to use/avoid, formatting instructions…"
                 value={form.instructions} onChange={set('instructions')} />
             </div>
 
-            {/* Notice */}
             <div style={{ background: 'var(--gold-pale)', borderRadius: 8, padding: '14px 16px', marginBottom: 20, fontSize: '0.87rem', color: 'var(--forest)', borderLeft: '3px solid var(--gold)' }}>
-              <strong>What happens next?</strong> After submission, our team will review your request and send you a price quote via the messaging system. You'll be notified to log in and respond.
+              <strong>What happens next?</strong> After submission, our team will review your request and send you a price quote via the messaging system.
             </div>
 
             <button className="btn btn-primary btn-full btn-lg" disabled={loading}>
