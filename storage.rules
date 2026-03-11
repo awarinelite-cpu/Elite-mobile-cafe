@@ -1,0 +1,13 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Deliverables: only admin can write, only order owner can read (after balance paid)
+    match /deliverables/{orderId}/{fileName} {
+      allow write: if request.auth != null &&
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow read:  if request.auth != null;
+    }
+  }
+}
