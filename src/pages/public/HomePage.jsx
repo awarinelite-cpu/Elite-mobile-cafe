@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, MessageSquare, CreditCard, Download, ArrowRight, Star, Shield, Clock } from 'lucide-react';
-import { CATEGORIES } from '../components/common/StatusHelpers';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -28,28 +27,19 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* ── HERO ── */}
+      {/* HERO */}
       <section style={{
         background: `linear-gradient(135deg, var(--forest-dark) 0%, var(--forest) 60%, var(--forest-mid) 100%)`,
         padding: 'clamp(60px, 10vw, 120px) 24px',
         position: 'relative',
         overflow: 'hidden',
       }}>
-        {/* decorative grid */}
-        <div style={{
-          position: 'absolute', inset: 0, opacity: 0.04,
-          backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 40px,#fff 40px,#fff 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,#fff 40px,#fff 41px)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute', top: -80, right: -80, width: 400, height: 400,
-          borderRadius: '50%', background: 'rgba(201,168,76,0.08)', pointerEvents: 'none',
-        }} />
-
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.04, backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 40px,#fff 40px,#fff 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,#fff 40px,#fff 41px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: -80, right: -80, width: 400, height: 400, borderRadius: '50%', background: 'rgba(201,168,76,0.08)', pointerEvents: 'none' }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 700 }}>
             <span className="section-eyebrow animate-fade-up">Research · Writing · Delivery</span>
-            <h1 style={{ color: 'var(--cream)', marginBottom: 24, animationDelay: '0.1s' }} className="animate-fade-up">
+            <h1 style={{ color: 'var(--cream)', marginBottom: 24 }} className="animate-fade-up">
               Premium Research,<br />
               <em style={{ color: 'var(--gold-light)', fontStyle: 'italic' }}>Delivered to You</em>
             </h1>
@@ -68,7 +58,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── CATEGORIES ── */}
+      {/* CATEGORIES */}
       <section style={{ padding: '72px 0', background: 'var(--cream-dark)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
@@ -77,11 +67,11 @@ export default function HomePage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
             {categories.map(cat => (
-              <button key={cat.label} className="card card-pad" onClick={() => navigate(`/topics?category=${cat.label}`)}
+              <button key={cat.label} className="card card-pad"
+                onClick={() => navigate(`/topics?category=${cat.label}`)}
                 style={{ textAlign: 'left', cursor: 'pointer', border: 'none', transition: 'all 0.22s' }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-              >
+                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
                 <div style={{ fontSize: '2.2rem', marginBottom: 14 }}>{cat.icon}</div>
                 <h4 style={{ marginBottom: 6 }}>{cat.label}</h4>
                 <p style={{ fontSize: '0.87rem', color: 'var(--muted)' }}>{cat.desc}</p>
@@ -91,7 +81,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ── */}
+      {/* HOW IT WORKS */}
       <section style={{ padding: '88px 0' }} id="how-it-works">
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
@@ -101,41 +91,27 @@ export default function HomePage() {
               Four straightforward steps from request to delivery — with full payment protection built in.
             </p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24, position: 'relative' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24 }}>
             {steps.map((step, i) => (
-              <div key={i} style={{ position: 'relative' }}>
-                <div className="card card-pad" style={{ height: '100%' }}>
-                  <div style={{
-                    width: 52, height: 52, borderRadius: 12,
-                    background: i === 3 ? 'var(--forest)' : 'var(--gold-pale)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: i === 3 ? 'var(--cream)' : 'var(--forest)',
-                    marginBottom: 18,
-                  }}>
-                    {step.icon}
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--gold)', marginBottom: 8, letterSpacing: '0.1em' }}>
-                    STEP {step.num}
-                  </div>
-                  <h4 style={{ marginBottom: 10 }}>{step.title}</h4>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--muted)', lineHeight: 1.65 }}>{step.desc}</p>
-                  {i === 3 && (
-                    <div style={{
-                      marginTop: 14, padding: '8px 12px', background: 'var(--gold-pale)',
-                      borderRadius: 6, display: 'flex', alignItems: 'center', gap: 8,
-                      fontSize: '0.8rem', color: 'var(--forest)', fontWeight: 600,
-                    }}>
-                      🔒 Download locked until final payment
-                    </div>
-                  )}
+              <div key={i} className="card card-pad">
+                <div style={{ width: 52, height: 52, borderRadius: 12, background: i === 3 ? 'var(--forest)' : 'var(--gold-pale)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: i === 3 ? 'var(--cream)' : 'var(--forest)', marginBottom: 18 }}>
+                  {step.icon}
                 </div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--gold)', marginBottom: 8, letterSpacing: '0.1em' }}>STEP {step.num}</div>
+                <h4 style={{ marginBottom: 10 }}>{step.title}</h4>
+                <p style={{ fontSize: '0.9rem', color: 'var(--muted)', lineHeight: 1.65 }}>{step.desc}</p>
+                {i === 3 && (
+                  <div style={{ marginTop: 14, padding: '8px 12px', background: 'var(--gold-pale)', borderRadius: 6, fontSize: '0.8rem', color: 'var(--forest)', fontWeight: 600 }}>
+                    🔒 Download locked until final payment
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── FEATURES ── */}
+      {/* FEATURES */}
       <section style={{ padding: '72px 0', background: 'var(--forest-dark)' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 32 }}>
@@ -154,7 +130,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── CTA BANNER ── */}
+      {/* CTA */}
       <section style={{ padding: '80px 0', background: 'var(--gold-pale)' }}>
         <div className="container" style={{ textAlign: 'center' }}>
           <span className="section-eyebrow">Get Started Today</span>
@@ -173,7 +149,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
+      {/* FOOTER */}
       <footer style={{ background: 'var(--forest-dark)', color: 'rgba(245,240,227,0.5)', padding: '32px 24px', textAlign: 'center', fontSize: '0.85rem' }}>
         <div className="container">
           <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', color: 'var(--cream)', marginBottom: 8 }}>
