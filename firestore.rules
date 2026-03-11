@@ -1,55 +1,44 @@
-rules_version = '2';
+// firestore.rules
+// Deploy with: firebase deploy --only firestore:rules
 
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── HELPER FUNCTIONS ──────────────────────────────────────────
-    function isAuth() { return request.auth != null; }
-    function isOwner(uid) { return request.auth.uid == uid; }
+    // ── helpers ──────────────────────────────────────────────
+    function isAuth()  { return request.auth != null; }
+    function uid()     { return request.auth.uid; }
     function isAdmin() {
       return isAuth() &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+        get(/databases/$(database)/documents/users/$(uid())).data.role == 'admin';
     }
 
-    // ── USERS ─────────────────────────────────────────────────────
-    match /users/{uid} {
-      allow read:   if isAuth() && (isOwner(uid) || isAdmin());
-      allow create: if isAuth() && isOwner(uid);
-      allow update: if isAuth() && (isOwner(uid) || isAdmin());
+    // ── users ─────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read:   if isAuth() && (uid() == userId || isAdmin());
+      allow create: if isAuth() && uid() == userId;
+      allow update: if isAdmin();
     }
 
-    // ── TOPICS ────────────────────────────────────────────────────
+    // ── topics ────────────────────────────────────────────────
     match /topics/{topicId} {
-      allow read:   if true;                       // public browsing
-      allow create, update, delete: if isAdmin();
+      allow read:   if isAuth();
+      allow write:  if isAdmin();
     }
 
-    // ── ORDERS ────────────────────────────────────────────────────
+    // ── orders ────────────────────────────────────────────────
     match /orders/{orderId} {
-      allow read:   if isAuth() &&
-        (resource.data.clientId == request.auth.uid || isAdmin());
-      allow create: if isAuth();
-      allow update: if isAuth() &&
-        (resource.data.clientId == request.auth.uid || isAdmin());
+      // Client can read their own orders; admin reads all
+      allow read:   if isAuth() && (
+        resource.data.clientId == uid() || isAdmin()
+      );
+      // Client creates order
+      allow create: if isAuth() && request.resource.data.clientId == uid();
+      // Client or admin can update
+      allow update: if isAuth() && (
+        resource.data.clientId == uid() || isAdmin()
+      );
       allow delete: if isAdmin();
-
-      // Messages sub-collection
-      match /messages/{msgId} {
-        allow read:  if isAuth() &&
-          (get(/databases/$(database)/documents/orders/$(orderId)).data.clientId == request.auth.uid || isAdmin());
-        allow create: if isAuth() &&
-          (get(/databases/$(database)/documents/orders/$(orderId)).data.clientId == request.auth.uid || isAdmin());
-        allow update: if isAuth();
-      }
-
-      // Payments sub-collection
-      match /payments/{payId} {
-        allow read: if isAuth() &&
-          (get(/databases/$(database)/documents/orders/$(orderId)).data.clientId == request.auth.uid || isAdmin());
-        allow create: if isAuth() &&
-          get(/databases/$(database)/documents/orders/$(orderId)).data.clientId == request.auth.uid;
-        allow update: if isAdmin();
-      }
     }
   }
 }

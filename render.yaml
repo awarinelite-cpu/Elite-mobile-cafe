@@ -1,0 +1,45 @@
+# render.yaml
+# ─────────────────────────────────────────────────────────
+# Render deployment config.
+# Connect your GitHub repo on https://render.com
+# then set the environment variables below in the Render dashboard.
+# ─────────────────────────────────────────────────────────
+
+services:
+  - type: web
+    name: researchhub
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
+    pullRequestPreviewsEnabled: true
+
+    # Client-side routing — serve index.html for all routes
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+    envVars:
+      - key: REACT_APP_FIREBASE_API_KEY
+        sync: false          # Set manually in Render dashboard
+
+      - key: REACT_APP_FIREBASE_AUTH_DOMAIN
+        sync: false
+
+      - key: REACT_APP_FIREBASE_PROJECT_ID
+        sync: false
+
+      - key: REACT_APP_FIREBASE_STORAGE_BUCKET
+        sync: false
+
+      - key: REACT_APP_FIREBASE_MESSAGING_SENDER_ID
+        sync: false
+
+      - key: REACT_APP_FIREBASE_APP_ID
+        sync: false
+
+      - key: REACT_APP_PAYSTACK_PUBLIC_KEY
+        sync: false          # e.g. pk_live_xxxx
+
+      - key: REACT_APP_ADMIN_EMAIL
+        sync: false          # your admin email address
