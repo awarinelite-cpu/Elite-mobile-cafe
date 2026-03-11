@@ -1,82 +1,71 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+// src/contexts/AuthContext.jsx
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
   updateProfile,
-  sendPasswordResetEmail,
-} from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db } from '../firebase/config';
+} from "firebase/auth";
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "../firebase";
 
 const AuthContext = createContext();
+export const useAuth = () => useContext(AuthContext);
 
-export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
-};
+const ADMIN_EMAIL = process.env.REACT_APP_ADMIN_EMAIL || "admin@research.com";
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+export function AuthProvider({ children }) {
+  const [user, setUser]       = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const isAdmin = profile?.role === 'admin' ||
-    user?.email === process.env.REACT_APP_ADMIN_EMAIL;
+  // Register a new client
+  async function register(email, password, name) {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(cred.user, { displayName: name });
+    const role = email === ADMIN_EMAIL ? "admin" : "client";
+    await setDoc(doc(db, "users", cred.user.uid), {
+      uid: cred.user.uid,
+      name,
+      email,
+      role,
+      createdAt: serverTimestamp(),
+    });
+    return cred;
+  }
+
+  // Login
+  function login(email, password) {
+    return signInWithEmailAndPassword(auth, email, password);
+  }
+
+  // Logout
+  function logout() {
+    return signOut(auth);
+  }
+
+  // Load Firestore profile
+  async function loadProfile(uid) {
+    const snap = await getDoc(doc(db, "users", uid));
+    if (snap.exists()) setProfile(snap.data());
+  }
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
-      if (u) {
-        const ref = doc(db, 'users', u.uid);
-        const snap = await getDoc(ref);
-        if (snap.exists()) {
-          setProfile(snap.data());
-        } else {
-          const isAdminEmail = u.email === process.env.REACT_APP_ADMIN_EMAIL;
-          const newProfile = {
-            uid: u.uid,
-            email: u.email,
-            displayName: u.displayName || '',
-            role: isAdminEmail ? 'admin' : 'client',
-            createdAt: serverTimestamp(),
-          };
-          await setDoc(ref, newProfile);
-          setProfile(newProfile);
-        }
-      } else {
-        setProfile(null);
-      }
+      if (u) await loadProfile(u.uid);
+      else    setProfile(null);
       setLoading(false);
     });
     return unsub;
   }, []);
 
-  const register = async (email, password, displayName) => {
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(cred.user, { displayName });
-    const isAdminEmail = email === process.env.REACT_APP_ADMIN_EMAIL;
-    const newProfile = {
-      uid: cred.user.uid,
-      email,
-      displayName,
-      role: isAdminEmail ? 'admin' : 'client',
-      createdAt: serverTimestamp(),
-    };
-    await setDoc(doc(db, 'users', cred.user.uid), newProfile);
-    setProfile(newProfile);
-    return cred;
-  };
-
-  const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
-  const logout = () => signOut(auth);
-  const resetPassword = (email) => sendPasswordResetEmail(auth, email);
+  const isAdmin = profile?.role === "admin";
 
   return (
-    <AuthContext.Provider value={{ user, profile, isAdmin, loading, register, login, logout, resetPassword }}>
-      {children}
+    <AuthContext.Provider value={{ user, profile, isAdmin, loading, register, login, logout }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
-};
+}
