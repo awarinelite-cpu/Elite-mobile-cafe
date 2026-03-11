@@ -27,7 +27,6 @@ export default function DashboardPage() {
   return (
     <div className="page-content">
       <div className="container">
-        {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 36 }}>
           <div>
             <span className="section-eyebrow">Client Portal</span>
@@ -39,7 +38,6 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* Stats */}
         {orders.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16, marginBottom: 36 }}>
             {[
@@ -56,7 +54,6 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Orders List */}
         {loading ? (
           <div className="loading-center"><div className="spinner" /></div>
         ) : orders.length === 0 ? (
@@ -100,8 +97,6 @@ export default function DashboardPage() {
                     <ArrowRight size={16} color="var(--muted)" />
                   </div>
                 </div>
-
-                {/* Payment progress bar */}
                 {order.agreedPrice && (
                   <div style={{ padding: '0 22px 16px', display: 'flex', gap: 6 }}>
                     <div style={{ flex: 1, height: 4, borderRadius: 2, background: order.advancePaid ? 'var(--forest)' : 'var(--cream-dark)' }} />
